@@ -25,11 +25,31 @@ console.log(halley.behavior); // Print behavior value to console
 
 class Surgeon {
   constructor(name, department) {
-    this.name = name;
-    this.department = department;
+    this._name = name;
+    this._department = department;
+    this._remainingVacationDays = 20;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get department() {
+    return this._department;
+  }
+
+  get remainingVacationDays() {
+    return this._remainingVacationDays;
+  }
+
+  takeVacationDays(daysOff) {
+    const startingVacationDays = this.remainingVacationDays;
+    const leftOverVacationDays = startingVacationDays - daysOff;
+    this._remainingVacationDays = leftOverVacationDays;
   }
 }
 
-
 const surgeonRomero = new Surgeon('Francisco Romero', 'Cardiovascular');
 const surgeonJackson = new Surgeon('Ruth Jackson', 'Orthopedics');
+
+surgeonJackson.takeVacationDays(5);
