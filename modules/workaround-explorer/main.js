@@ -55,7 +55,7 @@ function updateResults() {
   // If either the company or role is unselected, return.
   if (!company || !role) { return; }
 
-  // TODO: Use the workAroundModule functions to calculate the needed data.
+  // Use the workAroundModule functions to calculate the needed data.
   const averageSalaryByRole = formatNumber(getAverageSalaryByRole(role));
   const averageSalaryByCompany = formatNumber(getAverageSalaryByCompany(company));
   const salary = formatNumber(getSalaryAtCompany(role, company));
