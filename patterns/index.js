@@ -1,7 +1,9 @@
 const calc = () => {
-  return 4 * 3;
+  return 4 * 4;
 }
 
-let aNumber = calc();
+const printCalc = (callback) => {
+  console.log(callback);
+}
 
-console.log(aNumber);
+printCalc(calc);
