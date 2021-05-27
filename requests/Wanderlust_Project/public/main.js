@@ -1,4 +1,6 @@
 import { CLIENT_ID, CLIENT_SECRET, OPEN_WEATHER_KEY } from './keys.js';
+let venuesIds = [];
+const VENUES = 0;
 
 // Foursquare API Info
 const clientId = CLIENT_ID;
@@ -18,7 +20,7 @@ const $container = $('.container');
 const $venueDivs = [$("#venue1"), $("#venue2"), $("#venue3")];
 const $weatherDiv = $("#weather1");
 
-// Add AJAX functions here:
+// AJAX functions:
 const getVenues = async() => {
   const city = $input.val();
   const urlToFetch = `${url}explore?near=${city}&limit=10&client_id=${clientId}&client_secret=${clientSecret}&v=${versionDate}`;
@@ -26,23 +28,17 @@ const getVenues = async() => {
     const response = await fetch(urlToFetch);
     if (response.ok) {
       const jsonResponse = await response.json();
-      const venues = jsonResponse.response.groups[0].items.map(item => item.venue);
-      const result = randomizeArray(venues);
+      // Extracting venues from jsonResponse
+      const result = jsonResponse.response.groups[0].items.map(item => item.venue);
+      // Store the id of each venue for a later request
+      result.forEach(
+        venue => venuesIds.push(venue.id)
+      );
       return result;
     }
   } catch (error) {
     console.log(error);
   }
-}
-
-const randomizeArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i)
-    const temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
-  }
-  return array;
 }
 
 const getForecast = async() => {
@@ -59,9 +55,28 @@ const getForecast = async() => {
   }
 }
 
+const venuesPhotosUrl = async() => {
+  console.log(venuesIds);
+  for await (const id of venuesIds) {
+    const urlToFetch = `${url}${id}/photos?client_id=${clientId}&client_secret=${clientSecret}&v=${versionDate}`;
+    console.log(urlToFetch);
+    try {
+      const response = await fetch(urlToFetch);
+      console.log(response);
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        console.log(jsonResponse);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
 
 // Render functions
-const renderVenues = async(venues) => {
+const renderVenues = async(responses) => {
+  venues = responses[VENUES];
   $venueDivs.forEach(($venue, index) => {
     const venue = venues[index];
     const venueIcon = venue.categories[0].icon;
@@ -77,14 +92,26 @@ const renderForecast = (day) => {
   $weatherDiv.append(weatherContent);
 }
 
+// Helper functions
+const randomizeArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+  return array;
+}
+
 const executeSearch = () => {
   $venueDivs.forEach(venue => venue.empty());
   $weatherDiv.empty();
   $destination.empty();
   $container.css("visibility", "visible");
-  getVenues().then(venues => renderVenues(venues));
+  Promise.all([getVenues(), venuesPhotosUrl()]).then(responses => renderVenues(responses));
   getForecast().then(forecast => renderForecast(forecast));
   return false;
 }
 
-$submit.click(executeSearch)
+// Event listener
+$submit.click(executeSearch);
