@@ -27,7 +27,8 @@ const getVenues = async() => {
     if (response.ok) {
       const jsonResponse = await response.json();
       const venues = jsonResponse.response.groups[0].items.map(item => item.venue);
-      return randomizeArray(venues);
+      const result = randomizeArray(venues);
+      return result;
     }
   } catch (error) {
     console.log(error);
@@ -50,8 +51,8 @@ const getForecast = async() => {
   try {
     const response = await fetch(urlToFetch);
     if (response.ok) {
-      const jsonResponse = await response.json();
-      return jsonResponse;
+      const result = await response.json();
+      return result;
     }
   } catch (error) {
     console.log(error);
@@ -69,7 +70,6 @@ const renderVenues = async(venues) => {
     $venue.append(venueContent);
   });
   $destination.append(`<h2>${venues[0].location.city}</h2>`);
-  return venues;
 }
 
 const renderForecast = (day) => {
