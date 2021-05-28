@@ -66,6 +66,7 @@ const venuesPhotosUrl = async() => {
       if (response.ok) {
         const jsonResponse = await response.json();
         console.log(jsonResponse);
+        return jsonResponse;
       }
     } catch (error) {
       console.log(error)
@@ -76,7 +77,7 @@ const venuesPhotosUrl = async() => {
 
 // Render functions
 const renderVenues = async(responses) => {
-  venues = responses[VENUES];
+  const venues = responses[VENUES];
   $venueDivs.forEach(($venue, index) => {
     const venue = venues[index];
     const venueIcon = venue.categories[0].icon;
