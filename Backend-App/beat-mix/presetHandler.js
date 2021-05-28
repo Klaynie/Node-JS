@@ -1,8 +1,33 @@
-// Use this presets array inside your presetHandler
 const presets = require('./presets');
+const GET = 'GET';
+const PUT = 'PUT';
+const STATUS_200 = 200;
+const STATUS_400 = 400;
+const STATUS_404 = 404;
 
-// Complete this function:
-const presetHandler = () => {};
+const presetHandler = (type, presetsIndex, newPresetArray) => {
+  if (isValidType(type)) {
+    if (isValidIndex(presetsIndex)) {
+      switch (type) {
+        case GET:
+          return [STATUS_200, presets[presetsIndex]];
+        case PUT:
+          presets[presetsIndex] = newPresetArray;
+          return [STATUS_200, newPresetArray];
+      }
+    } else {
+      return [STATUS_404, 'Not Found'];
+    }
+  } else {
+    return [STATUS_400, 'Bad Request'];
+  }
+};
 
-// Leave this line so that your presetHandler function can be used elsewhere:
+const isValidType = (type) => {
+  return type === GET || type === PUT;
+}
+const isValidIndex = (index) => {
+  return index >= 0 && index < presets.length;
+}
+
 module.exports = presetHandler;
